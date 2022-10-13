@@ -68,7 +68,7 @@ jobs:
       - name: Generate declarative config
         run: |
           inso generate config test_Siemens_Swagger --tags test_Siemens_Swagger --output kong.yaml
-          deck convert --from kong-gateway-2.x --to konnect --input-file kong.yaml --output-file konnect.yaml
+          deck convert --from kong-gateway-2.x --to kong-gateway-3.x --input-file kong.yaml --output-file konnect.yaml
           cat konnect.yaml
       # Ping the Kong instance
       # Sync to Konnect
