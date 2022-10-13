@@ -8,7 +8,7 @@ data:
   scheme: https
   base_path: /anything
   host: httpbin.org
-  testUrl: ${KONG_PROXY_URL}
+  testUrl: ${KONG_PROXY_URL}$
 dataPropertyOrder:
   "&":
     - scheme
