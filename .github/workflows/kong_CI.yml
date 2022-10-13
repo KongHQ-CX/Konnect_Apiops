@@ -74,7 +74,16 @@ jobs:
       # Sync to Konnect
       - name: Update Kong
         run: deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONNECT_ADDR }}" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONNECT_ADDR }}" -s konnect.yaml > sync.output.txt
-            
+
+      # Prepare test spec             
+      - name: Prepare URL 4 Test file
+        uses: cschleiden/replace-tokens@v1
+        with:
+          tokenPrefix: '${'
+          tokenSuffix: '}$'
+          files: '["./.insomnia/Environment/*.yml"]'
+        env:
+          KONG_PROXY_URL: '${{ secrets.KONG_PROXY_URL }}'
       # Run tests
       - name: Run test suites
         run: inso run test test_Siemens_Swagger -e ${{ env.TARGET_ENVIRONMENT }}
