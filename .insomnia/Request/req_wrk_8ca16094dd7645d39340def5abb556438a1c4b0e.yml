@@ -3,7 +3,7 @@ type: Request
 parentId: wrk_8ca16094dd7645d39340def5abb55643
 modified: 1665695575293
 created: 1665650508028
-url: "{{ _.testUrl }}/rates"
+url: "{{ base_url }}/rates"
 name: rateCurrentRoute
 description: ""
 method: GET

@@ -1,16 +1,14 @@
 _id: env_204fceae6d97ca706cb71b5a40d1da5e78c4df3b
 type: Environment
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665695344795
+modified: 1665696428438
 created: 1665648128995
 name: Base Environment
 data:
-  base_url: "{{ scheme }}://{{ host }}{{ base_path }}"
-  testUrl: ${KONG_PROXY_URL}$
+  base_url: ${KONG_PROXY_URL}$
 dataPropertyOrder:
   "&":
     - base_url
-    - testUrl
 color: null
 isPrivate: false
 metaSortKey: 1665648128995

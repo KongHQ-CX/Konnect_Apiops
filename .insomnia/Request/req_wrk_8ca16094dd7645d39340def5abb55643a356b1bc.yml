@@ -3,7 +3,7 @@ type: Request
 parentId: wrk_8ca16094dd7645d39340def5abb55643
 modified: 1665695558374
 created: 1665650508026
-url: "{{ _.testUrl }}/test"
+url: "{{ base_url }}/test"
 name: testEchoRoute
 description: ""
 method: GET

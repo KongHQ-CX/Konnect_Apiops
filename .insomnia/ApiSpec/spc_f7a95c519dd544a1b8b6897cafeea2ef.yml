@@ -1,9 +1,9 @@
 _id: spc_f7a95c519dd544a1b8b6897cafeea2ef
 type: ApiSpec
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665695553226
+modified: 1665697240487
 created: 1665648128993
-fileName: test_Siemens_Swagger
+fileName: Konnect_ApiOps_Example
 contents: |
   openapi: 3.0.0
   info:
