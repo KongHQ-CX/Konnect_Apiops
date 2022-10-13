@@ -1,0 +1,82 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches:
+     - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  deploy-customer-api:
+    name: Deploy Customer API to Gateway and Dev Portal
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v1
+      - name: Backup Insomnia Spec
+        run: |
+          mkdir ./spec-backup
+          cp ./.insomnia/ApiSpec/*.yml ./spec-backup
+          ls ./spec-backup            
+      #Installing the inso, deck and portal cli
+      - name: Install NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - name: Install Deck  
+        run: |
+          curl -sL https://github.com/kong/deck/releases/download/v1.6.0/deck_1.6.0_linux_amd64.tar.gz -o deck.tar.gz
+          tar -xf deck.tar.gz -C /tmp
+          sudo cp /tmp/deck /usr/local/bin/ 
+      - name: Install inso
+        run: npm install -g insomnia-inso
+   
+      # Push Dev Portal changes
+      - name: Dev Portal change
+        run: |
+          curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ secrets.PORTAL_ID }}' \
+          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
+          -H 'content-type: application/json' \
+          --data-raw @./portal/spec.json
+        
+      # API Spec linting
+      - name: Validate specification
+        run: inso lint spec test_Siemens_Swagger
+      
+      # Prepare OAS spec             
+      - name: Prepare URL 4 Declarative Services
+        uses: cschleiden/replace-tokens@v1
+        with:
+          tokenPrefix: '${'
+          tokenSuffix: '}$'
+          files: '["./.insomnia/ApiSpec/*.yml"]'
+        env:
+          UPSTREAM_SERVER_URL: '${{ secrets.UPSTREAM_SERVER_URL }}'
+          SUMO_SERVER_URL: '${{ secrets.SUMO_SERVER_URL }}'
+      
+      # Generate declarative config
+      - name: Generate declarative config
+        run: |
+          inso generate config test_Siemens_Swagger --tags test_Siemens_Swagger --output konnect.yaml 
+          cat kong.yaml
+      # Ping the Kong instance
+      # Sync to Konnect
+      - name: Update Kong
+        run: deck ping --headers "kong-admin-token:${{ secrets.KONNECT_TOKEN }}" --kong-addr ${{ secrets.KONG_ADDR }} && deck sync --headers "kong-admin-token:${{ secrets.KONNECT_TOKEN }}" --workspace customer --skip-consumers --kong-addr ${{ secrets.KONG_ADDR }} > sync.output.txt
+            
+      # Run tests
+      - name: Run test suites
+        run: inso run test customer-api -e ${{ env.TARGET_ENVIRONMENT }}
+        env:
+          TARGET_ENVIRONMENT: Azure
