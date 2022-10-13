@@ -1,7 +1,7 @@
 _id: spc_f7a95c519dd544a1b8b6897cafeea2ef
 type: ApiSpec
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665675025047
+modified: 1665684742402
 created: 1665648128993
 fileName: test_Siemens_Swagger
 contents: |
@@ -29,51 +29,13 @@ contents: |
         operationId: getRate
         tags:
           - Generate echo message
-    /rates/{date}:
-      get:
-        parameters:
-          - in: path
-            name: date
-            required: true
-            schema:
-              type: string
-            description: The echo message
-        responses:
-          "200":
-            description: An echo message.
-        summary: Return a echo message.
-        operationId: getRateDate
-        tags:
-          - Generate echo message
-    /test/$echo:
+    /test:
       get:
         responses:
           "200":
             description: An echo message.
         summary: Return a echo message.
         operationId: getEcho
-        tags:
-          - Generate echo message
-    /Batchs(Material=''{Material}'',Batch=''{Batch}''):
-      get:
-        parameters:
-          - in: path
-            name: Material
-            required: true
-            schema:
-              type: string
-            description: The echo message
-          - in: path
-            name: Batch
-            required: true
-            schema:
-              type: string
-            description: The echo message
-        responses:
-          "200":
-            description: An echo message.
-        summary: Return a echo message.
-        operationId: getBatch
         tags:
           - Generate echo message
   servers:
