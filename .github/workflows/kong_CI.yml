@@ -48,7 +48,7 @@ jobs:
           curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ secrets.PORTAL_ID }}' \
           -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
           -H 'content-type: application/json' \
-          -d @../portal/spec.json
+          -d @./portal/spec.json
         
       # API Spec linting
       - name: Validate specification
@@ -72,7 +72,7 @@ jobs:
       # Ping the Kong instance
       # Sync to Konnect
       - name: Update Kong
-        run: deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONG_ADDR }}" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONG_ADDR }}" -s konnect.yaml > sync.output.txt
+        run: deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONNECT_ADDR }}" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONNECT_ADDR }}" -s konnect.yaml > sync.output.txt
             
       # Run tests
       - name: Run test suites
