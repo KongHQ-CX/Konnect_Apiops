@@ -71,7 +71,7 @@ jobs:
       - name: Update Kong
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputEU.txt
-          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputUS.txt
+          #deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputUS.txt
 
       # Prepare test spec             
       - name: Prepare URL 4 Test file
