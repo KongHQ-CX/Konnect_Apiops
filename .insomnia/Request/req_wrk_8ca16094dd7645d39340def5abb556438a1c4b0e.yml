@@ -1,9 +1,9 @@
 _id: req_wrk_8ca16094dd7645d39340def5abb556438a1c4b0e
 type: Request
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665684762430
+modified: 1665695100957
 created: 1665650508028
-url: "{{ base_url }}/rates/current"
+url: "{{ testUrl }}/rates/current"
 name: rateCurrentRoute
 description: ""
 method: GET

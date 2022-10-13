@@ -1,9 +1,9 @@
 _id: req_wrk_8ca16094dd7645d39340def5abb55643a356b1bc
 type: Request
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665684757513
+modified: 1665695107198
 created: 1665650508026
-url: "{{ base_url }}/test"
+url: "{{ testUrl }}/test"
 name: testEchoRoute
 description: ""
 method: GET
