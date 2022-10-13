@@ -41,14 +41,22 @@ jobs:
       - name: Install inso
         run: brew install inso
    
-      # Push Dev Portal changes
+      # Push Dev Portal US changes
       - name: Dev Portal change
         run: |
-          curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ secrets.PORTAL_ID }}' \
+          curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ secrets.PORTAL_US_ID }}' \
           -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
           -H 'content-type: application/json' \
-          -d @./portal/spec.json
+          -d @./portal/spec_US.json
         
+      # Push Dev Portal EU changes
+      - name: Dev Portal change
+        run: |
+          curl -X 'PATCH' 'https://eu.api.konghq.com/konnect-api/api/portals/${{ secrets.PORTAL_EU_ID }}' \
+          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
+          -H 'content-type: application/json' \
+          -d @./portal/spec_EU.json
+
       # API Spec linting
       - name: Validate specification
         run: inso lint spec test_Siemens_Swagger
