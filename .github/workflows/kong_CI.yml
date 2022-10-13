@@ -43,7 +43,7 @@ jobs:
           
       # Get Dev Portal EU ID
       - name: Get Dev Portal EU ID
-      - run: |
+        run: |
           portalEuId=$( curl 'https://eu.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
           echo "PORTAL_EU_ID=$portalEuId" >> $GITHUB_ENV
         
