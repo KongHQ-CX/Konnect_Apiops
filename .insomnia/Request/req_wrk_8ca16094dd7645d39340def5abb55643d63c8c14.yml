@@ -1,0 +1,21 @@
+_id: req_wrk_8ca16094dd7645d39340def5abb55643d63c8c14
+type: Request
+parentId: wrk_8ca16094dd7645d39340def5abb55643
+modified: 1665650508027
+created: 1665650508027
+url: "{{ base_url }}/rates/{{ date }}"
+name: Return a echo message.
+description: ""
+method: GET
+body: {}
+parameters: []
+headers: []
+authentication: {}
+metaSortKey: -1665650508027
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

@@ -1,0 +1,24 @@
+_id: req_wrk_8ca16094dd7645d39340def5abb556438a1c4b0e
+type: Request
+parentId: wrk_8ca16094dd7645d39340def5abb55643
+modified: 1665650508028
+created: 1665650508028
+url: "{{ base_url }}/rates/current"
+name: Return a echo message.
+description: ""
+method: GET
+body: {}
+parameters:
+  - name: message
+    disabled: false
+    value: string
+headers: []
+authentication: {}
+metaSortKey: -1665650508028
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

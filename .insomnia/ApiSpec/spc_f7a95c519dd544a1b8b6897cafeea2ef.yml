@@ -1,0 +1,81 @@
+_id: spc_f7a95c519dd544a1b8b6897cafeea2ef
+type: ApiSpec
+parentId: wrk_8ca16094dd7645d39340def5abb55643
+modified: 1665650790533
+created: 1665648128993
+fileName: test_Siemens_Swagger.yaml
+contents: |
+  openapi: 3.0.0
+  info:
+   title: SampleAPI
+   version: "1.0"
+  tags:
+    - description: Sample API
+      name: Sample Echo API
+  paths:
+    /rates/current:
+      get:
+        parameters:
+          - in: query
+            name: message
+            required: true
+            schema:
+              type: string
+            description: The echo message
+        responses:
+          "200":
+            description: An echo message.
+        summary: Return a echo message.
+        operationId: getRate
+        tags:
+          - Generate echo message
+    /rates/{date}:
+      get:
+        parameters:
+          - in: path
+            name: date
+            required: true
+            schema:
+              type: string
+            description: The echo message
+        responses:
+          "200":
+            description: An echo message.
+        summary: Return a echo message.
+        operationId: getRateDate
+        tags:
+          - Generate echo message
+    /test/$echo:
+      get:
+        responses:
+          "200":
+            description: An echo message.
+        summary: Return a echo message.
+        operationId: getEcho
+        tags:
+          - Generate echo message
+    /Batchs(Material=''{Material}'',Batch=''{Batch}''):
+      get:
+        parameters:
+          - in: path
+            name: Material
+            required: true
+            schema:
+              type: string
+            description: The echo message
+          - in: path
+            name: Batch
+            required: true
+            schema:
+              type: string
+            description: The echo message
+        responses:
+          "200":
+            description: An echo message.
+        summary: Return a echo message.
+        operationId: getBatch
+        tags:
+          - Generate echo message
+  servers:
+    - url: https://httpbin.org/anything
+contentType: yaml
