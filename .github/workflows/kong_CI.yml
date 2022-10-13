@@ -63,7 +63,6 @@ jobs:
           files: '["./.insomnia/ApiSpec/*.yml"]'
         env:
           UPSTREAM_SERVER_URL: '${{ secrets.UPSTREAM_SERVER_URL }}'
-          SUMO_SERVER_URL: '${{ secrets.SUMO_SERVER_URL }}'
       
       # Generate declarative config
       - name: Generate declarative config
@@ -73,10 +72,10 @@ jobs:
       # Ping the Kong instance
       # Sync to Konnect
       - name: Update Kong
-        run: deck ping --headers "kong-admin-token:${{ secrets.KONNECT_TOKEN }}" --kong-addr ${{ secrets.KONG_ADDR }} && deck sync --headers "kong-admin-token:${{ secrets.KONNECT_TOKEN }}" --workspace customer --skip-consumers --kong-addr ${{ secrets.KONG_ADDR }} > sync.output.txt
+        run: deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONG_ADDR }}" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONG_ADDR }}" -s kong.yaml > sync.output.txt
             
       # Run tests
       - name: Run test suites
-        run: inso run test customer-api -e ${{ env.TARGET_ENVIRONMENT }}
+        run: inso run test test_Siemens_Swagger -e ${{ env.TARGET_ENVIRONMENT }}
         env:
-          TARGET_ENVIRONMENT: Azure
+          TARGET_ENVIRONMENT: AntoineEnv
