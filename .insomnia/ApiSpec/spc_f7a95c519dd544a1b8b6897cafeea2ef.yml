@@ -1,9 +1,9 @@
 _id: spc_f7a95c519dd544a1b8b6897cafeea2ef
 type: ApiSpec
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665667156793
+modified: 1665668015411
 created: 1665648128993
-fileName: test_Siemens_Swagger.yaml
+fileName: test_Siemens_Swagger
 contents: |
   openapi: 3.0.0
   info:
