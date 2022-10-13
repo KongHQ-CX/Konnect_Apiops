@@ -40,11 +40,17 @@ jobs:
           brew install deck
       - name: Install inso
         run: brew install inso
-   
+      
+      # Get Dev Portal US ID
+      - run: |
+          portalId=$( curl 'https://us.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq '.data[].id' )
+          echo "PORTAL_ID=$portalId" >> "$GITHUB_ENV"
+          echo "$PORTAL_ID"
+
       # Push Dev Portal US changes
       - name: Dev Portal change
         run: |
-          curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ secrets.PORTAL_US_ID }}' \
+          curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ secrets.PORTAL_ID }}' \
           -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
           -H 'content-type: application/json' \
           -d @./portal/spec_US.json
