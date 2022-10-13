@@ -1,12 +1,20 @@
 _id: env_204fceae6d97ca706cb71b5a40d1da5e78c4df3b
 type: Environment
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665648128995
+modified: 1665666893870
 created: 1665648128995
 name: Base Environment
 data:
   base_url: "{{ scheme }}://{{ host }}{{ base_path }}"
-dataPropertyOrder: null
+  date: test
+  Material: test_material
+  Batch: test_batch
+dataPropertyOrder:
+  "&":
+    - base_url
+    - date
+    - Material
+    - Batch
 color: null
 isPrivate: false
 metaSortKey: 1665648128995

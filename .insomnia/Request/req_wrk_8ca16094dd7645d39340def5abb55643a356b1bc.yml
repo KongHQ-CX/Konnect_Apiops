@@ -1,10 +1,10 @@
 _id: req_wrk_8ca16094dd7645d39340def5abb55643a356b1bc
 type: Request
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665650508026
+modified: 1665667088101
 created: 1665650508026
 url: "{{ base_url }}/test/$echo"
-name: Return a echo message.
+name: testEchoRoute
 description: ""
 method: GET
 body: {}

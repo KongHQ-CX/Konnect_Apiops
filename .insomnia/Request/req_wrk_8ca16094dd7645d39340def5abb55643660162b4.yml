@@ -1,10 +1,10 @@
 _id: req_wrk_8ca16094dd7645d39340def5abb55643660162b4
 type: Request
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665650508011
+modified: 1665666867290
 created: 1665650508011
 url: "{{ base_url }}/Batchs(Material=''{{ Material }}'',Batch=''{{ Batch }}'')"
-name: Return a echo message.
+name: RegexRoute
 description: ""
 method: GET
 body: {}
