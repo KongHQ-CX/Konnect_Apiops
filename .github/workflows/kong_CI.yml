@@ -35,7 +35,9 @@ jobs:
         with:
           node-version: '12'
       - name: Install Deck  
-        run: brew install deck
+        run: |
+          brew tap kong/deck
+          brew install deck
       - name: Install inso
         run: brew install inso
    
