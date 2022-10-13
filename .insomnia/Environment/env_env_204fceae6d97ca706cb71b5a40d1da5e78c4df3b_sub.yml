@@ -1,13 +1,10 @@
 _id: env_env_204fceae6d97ca706cb71b5a40d1da5e78c4df3b_sub
 type: Environment
 parentId: env_204fceae6d97ca706cb71b5a40d1da5e78c4df3b
-modified: 1665697432605
+modified: 1665698062854
 created: 1665650508031
 name: EU_Environement
 data:
-  scheme: https
-  base_path: /anything
-  host: httpbin.org
   base_url: ${KONG_PROXY_EU_URL}$
 dataPropertyOrder:
   "&":
