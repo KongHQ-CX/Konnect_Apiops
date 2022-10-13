@@ -40,25 +40,16 @@ jobs:
           brew install deck
       - name: Install inso
         run: brew install inso
-      
-      # Get Dev Portal US ID
+          
+      # Get Dev Portal EU ID
       - run: |
-          portalId=$( curl 'https://us.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq '.data[].id' )
-          echo "PORTAL_ID=$portalId" >> $GITHUB_ENV
-          echo "${{ env.PORTAL_ID }}"
-
-      # Push Dev Portal US changes
-      - name: Dev Portal change
-        run: |
-          curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ env.PORTAL_ID }}' \
-          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
-          -H 'content-type: application/json' \
-          -d @./portal/spec_US.json
+          portalEuId=$( curl 'https://eu.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
+          echo "PORTAL_EU_ID=$portalEuId" >> $GITHUB_ENV
         
       # Push Dev Portal EU changes
       - name: Dev Portal change
         run: |
-          curl -X 'PATCH' 'https://eu.api.konghq.com/konnect-api/api/portals/${{ secrets.PORTAL_EU_ID }}' \
+          curl -X 'PATCH' 'https://eu.api.konghq.com/konnect-api/api/portals/${{ env.PORTAL_EU_ID }}' \
           -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
           -H 'content-type: application/json' \
           -d @./portal/spec_EU.json
@@ -67,26 +58,19 @@ jobs:
       - name: Validate specification
         run: inso lint spec test_Siemens_Swagger
       
-      # Prepare OAS spec             
-      - name: Prepare URL 4 Declarative Services
-        uses: cschleiden/replace-tokens@v1
-        with:
-          tokenPrefix: '${'
-          tokenSuffix: '}$'
-          files: '["./.insomnia/ApiSpec/*.yml"]'
-        env:
-          UPSTREAM_SERVER_URL: '${{ secrets.UPSTREAM_SERVER_URL }}'
-      
       # Generate declarative config
       - name: Generate declarative config
         run: |
           inso generate config test_Siemens_Swagger --tags test_Siemens_Swagger --output kong.yaml
           deck convert --from kong-gateway-2.x --to kong-gateway-3.x --input-file kong.yaml --output-file konnect.yaml
           cat konnect.yaml
+      
       # Ping the Kong instance
       # Sync to Konnect
       - name: Update Kong
-        run: deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONNECT_ADDR }}" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "${{ secrets.KONNECT_ADDR }}" --konnect-runtime-group-name "Siemens_ApiOps" -s konnect.yaml > sync.output.txt
+        run: |
+          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name "Siemens_ApiOps" -s konnect.yaml > sync.outputEU.txt
+          #deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name "Siemens_ApiOps" -s konnect.yaml > sync.outputUS.txt
 
       # Prepare test spec             
       - name: Prepare URL 4 Test file
@@ -96,9 +80,9 @@ jobs:
           tokenSuffix: '}$'
           files: '["./.insomnia/Environment/*.yml"]'
         env:
-          KONG_PROXY_URL: '${{ secrets.KONG_PROXY_URL }}'
+          KONG_PROXY_URL: '${{ secrets.KONG_PROXY_EU_URL }}'
       # Run tests
       - name: Run test suites
         run: inso run test test_Siemens_Swagger -e ${{ env.TARGET_ENVIRONMENT }} --verbose
         env:
-          TARGET_ENVIRONMENT: AntoineEnv
+          TARGET_ENVIRONMENT: EU_Environement
