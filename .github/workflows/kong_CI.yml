@@ -86,6 +86,6 @@ jobs:
           KONG_PROXY_URL: '${{ secrets.KONG_PROXY_URL }}'
       # Run tests
       - name: Run test suites
-        run: inso run test test_Siemens_Swagger -e ${{ env.TARGET_ENVIRONMENT }}
+        run: inso run test test_Siemens_Swagger -e ${{ env.TARGET_ENVIRONMENT }} --verbose
         env:
           TARGET_ENVIRONMENT: AntoineEnv
