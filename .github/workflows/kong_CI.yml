@@ -57,12 +57,12 @@ jobs:
 
       # API Spec linting
       - name: Validate specification
-        run: inso lint spec test_Siemens_Swagger
+        run: inso lint spec Konnect_ApiOps_Example
       
       # Generate declarative config
       - name: Generate declarative config
         run: |
-          inso generate config test_Siemens_Swagger --tags test_Siemens_Swagger --output kong.yaml
+          inso generate config Konnect_ApiOps_Example --tags Konnect_ApiOps_Example --output kong.yaml
           deck convert --from kong-gateway-2.x --to kong-gateway-3.x --input-file kong.yaml --output-file konnect.yaml
           cat konnect.yaml
       
@@ -70,8 +70,8 @@ jobs:
       # Sync to Konnect
       - name: Update Kong
         run: |
-          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name "Siemens_ApiOps" -s konnect.yaml > sync.outputEU.txt
-          #deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name "Siemens_ApiOps" -s konnect.yaml > sync.outputUS.txt
+          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputEU.txt
+          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputUS.txt
 
       # Prepare test spec             
       - name: Prepare URL 4 Test file
@@ -84,6 +84,6 @@ jobs:
           KONG_PROXY_EU_URL: '${{ secrets.KONG_PROXY_EU_URL }}'
       # Run tests
       - name: Run test suites
-        run: inso run test test_Siemens_Swagger -e ${{ env.TARGET_ENVIRONMENT }} --verbose
+        run: inso run test Konnect_ApiOps_Example -e ${{ env.TARGET_ENVIRONMENT }} --verbose
         env:
           TARGET_ENVIRONMENT: EU_Environement
