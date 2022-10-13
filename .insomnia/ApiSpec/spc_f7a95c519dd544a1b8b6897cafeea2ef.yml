@@ -1,7 +1,7 @@
 _id: spc_f7a95c519dd544a1b8b6897cafeea2ef
 type: ApiSpec
 parentId: wrk_8ca16094dd7645d39340def5abb55643
-modified: 1665694806831
+modified: 1665695553226
 created: 1665648128993
 fileName: test_Siemens_Swagger
 contents: |
@@ -13,22 +13,15 @@ contents: |
     - description: Sample API
       name: Sample Echo API
   paths:
-    /rates/current:
+    /rates:
       get:
-        parameters:
-          - in: query
-            name: message
-            required: true
-            schema:
-              type: string
-            description: The echo message
         responses:
           "200":
-            description: An echo message.
-        summary: Return a echo message.
+            description: An echo rate message.
+        summary: Return a echo rate message.
         operationId: getRate
         tags:
-          - Generate echo message
+          - Generate echo rate message
     /test:
       get:
         responses:
