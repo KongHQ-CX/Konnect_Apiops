@@ -19,11 +19,13 @@ We will run this test case as part of our Git Actions workflow to make sure, api
 
 ## GitHub Actions
 I have created a simple workflow to build and deploy Kong Services, routes and plugins. This workflow starts with checking out the the code, creating a backup from customer api specification and installing nodejs, deck and inso CLI.
+
 Please add the following to Settingg-->Secrets configuration in your repository:
 ```
 KONNECT_TOKEN : Konnect Token
 KONG_PROXY_EU_URL: Kong Proxy EU Endpoint
 ```
+**Also replace the runtime group name in the kong_CI.yml github workflow or add a Konnect_ApiOps runtime group in Konnect**
 
 ```Get Dev Portal EU ID``` job retrieves the Developer Portal Id for the European Instance.
 
