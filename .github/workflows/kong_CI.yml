@@ -55,6 +55,20 @@ jobs:
           -H 'content-type: application/json' \
           -d @./portal/spec_EU.json
 
+      # Get Dev Portal US ID
+      - name: Get Dev Portal US ID
+        run: |
+          portalUsId=$( curl 'https://us.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
+          echo "PORTAL_US_ID=$portalUsId" >> $GITHUB_ENV
+        
+      # Push Dev Portal US changes
+      - name: Dev Portal US change
+        run: |
+          curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ env.PORTAL_US_ID }}' \
+          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
+          -H 'content-type: application/json' \
+          -d @./portal/spec_US.json
+
       # API Spec linting
       - name: Validate specification
         run: inso lint spec Konnect_ApiOps_Example
@@ -71,7 +85,7 @@ jobs:
       - name: Update Kong
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputEU.txt
-          #deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputUS.txt
+          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputUS.txt
 
       # Prepare test spec             
       - name: Prepare URL 4 Test file
