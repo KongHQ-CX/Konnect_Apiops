@@ -96,8 +96,14 @@ jobs:
           files: '["./.insomnia/Environment/*.yml"]'
         env:
           KONG_PROXY_EU_URL: '${{ secrets.KONG_PROXY_EU_URL }}'
-      # Run tests
+          KONG_PROXY_US_URL: '${{ secrets.KONG_PROXY_US_URL }}'
+      # Run tests on EU endpoint
       - name: Run test suites
         run: inso run test Konnect_ApiOps_Example -e ${{ env.TARGET_ENVIRONMENT }} --verbose
         env:
           TARGET_ENVIRONMENT: EU_Environement
+      # Run tests on US endpoint
+      - name: Run test suites
+        run: inso run test Konnect_ApiOps_Example -e ${{ env.TARGET_ENVIRONMENT }} --verbose
+        env:
+          TARGET_ENVIRONMENT: US_Environement

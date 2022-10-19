@@ -24,6 +24,7 @@ Please add the following to Settingg-->Secrets configuration in your repository:
 ```
 KONNECT_TOKEN : Konnect Token
 KONG_PROXY_EU_URL: Kong Proxy EU Endpoint
+KONG_PROXY_US_URL: Kong Proxy US Endpoint
 ```
 **Also replace the runtime group name in the kong_CI.yml github workflow or add a Konnect_ApiOps runtime group in Konnect!**
 
