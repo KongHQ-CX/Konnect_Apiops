@@ -1,0 +1,10 @@
+_id: ut_93dc40ec7ff74ea48315feef15658b2e
+type: UnitTest
+parentId: uts_fbb65b8cb7284914b5d8acb7c1620c7d
+modified: 1665671245893
+created: 1665666817943
+requestId: req_wrk_8ca16094dd7645d39340def5abb556438a1c4b0e
+name: Returns 200 for date route
+code: |-
+  const response1 = await insomnia.send();
+  expect(response1.status).to.equal(200);

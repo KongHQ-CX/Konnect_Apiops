@@ -1,0 +1,17 @@
+{
+  "theme_name": "mint_rocket",
+  "fonts": {
+    "base": "Roboto",
+    "code": "Roboto Mono",
+    "headings": "Lato"
+  },
+  "use_custom_fonts": false,
+  "logo": null,
+  "logo_filename": null,
+  "favicon": null,
+  "favicon_filename": null,
+  "custom_catalog": {
+    "welcome_message": "Konnect Test CI_CD US"
+  },
+  "catalog_cover": null
+}

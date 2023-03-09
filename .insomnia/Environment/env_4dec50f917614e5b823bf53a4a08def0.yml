@@ -1,0 +1,14 @@
+_id: env_4dec50f917614e5b823bf53a4a08def0
+type: Environment
+parentId: env_204fceae6d97ca706cb71b5a40d1da5e78c4df3b
+modified: 1666166971127
+created: 1666166940879
+name: US_Environement
+data:
+  base_url: ${KONG_PROXY_US_URL}$
+dataPropertyOrder:
+  "&":
+    - base_url
+color: null
+isPrivate: false
+metaSortKey: 1665650508081

@@ -1,0 +1,36 @@
+_id: spc_f7a95c519dd544a1b8b6897cafeea2ef
+type: ApiSpec
+parentId: wrk_8ca16094dd7645d39340def5abb55643
+modified: 1665698035226
+created: 1665648128993
+fileName: Konnect_ApiOps_Example
+contents: |
+  openapi: 3.0.0
+  info:
+   title: SampleAPI
+   version: "1.0"
+  tags:
+    - description: Sample API
+      name: Sample Echo API
+  paths:
+    /rates:
+      get:
+        responses:
+          "200":
+            description: An echo rate message.
+        summary: Return a echo rate message.
+        operationId: getRate
+        tags:
+          - Generate echo rate message
+    /test:
+      get:
+        responses:
+          "200":
+            description: An echo message.
+        summary: Return a echo message.
+        operationId: getEcho
+        tags:
+          - Generate echo message
+  servers:
+    - url: https://httpbin.org/anything
+contentType: yaml

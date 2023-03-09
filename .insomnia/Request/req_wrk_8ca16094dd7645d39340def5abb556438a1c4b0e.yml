@@ -1,0 +1,25 @@
+_id: req_wrk_8ca16094dd7645d39340def5abb556438a1c4b0e
+type: Request
+parentId: wrk_8ca16094dd7645d39340def5abb55643
+modified: 1665695575293
+created: 1665650508028
+url: "{{ base_url }}/rates"
+name: rateCurrentRoute
+description: ""
+method: GET
+body: {}
+parameters:
+  - name: message
+    disabled: false
+    value: string
+    id: pair_0acbf27d8ac74c328fd14a8347e0c9a6
+headers: []
+authentication: {}
+metaSortKey: -1665650508028
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
