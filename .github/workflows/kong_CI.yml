@@ -20,7 +20,7 @@ on:
 jobs:
   deploy-customer-api:
     name: Deploy Customer API to Gateway and Dev Portal
-    runs-on: self-hosted
+    runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout branch
         uses: actions/checkout@v1
