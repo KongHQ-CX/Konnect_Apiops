@@ -28,12 +28,12 @@ jobs:
     runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v1        
+        uses: actions/checkout@v3       
       #Installing the inso, deck and portal cli
       - name: Install NodeJS
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '12'
+          node-version: '16'
       - name: Install Deck  
         run: |
           brew tap kong/deck
