@@ -172,7 +172,7 @@ jobs:
 
       # Publish Service Spec EU
       - name: Publish EU Service Package
-        if: ${{ contains(env.REGIONS, "EU") }}
+        if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           curl -X 'PUT' 'https://eu.api.konghq.com/konnect-api/api/service_packages/${{ env.SERVICE_PACKAGE_ID }}/portals/${{ env.PORTAL_EU_ID }}' \
           -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}'
