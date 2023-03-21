@@ -74,7 +74,7 @@ jobs:
         if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com"
-          deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
+          deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml -s config/
 
       # Ping the Kong instance for EU
       # Sync to Konnect
@@ -82,7 +82,7 @@ jobs:
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com"
-          deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
+          deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml -s config/
 
       # Prepare test spec             
       - name: Prepare URL 4 Test file
