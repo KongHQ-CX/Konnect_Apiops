@@ -52,7 +52,7 @@ jobs:
 
       #Backup old config 
       - name: Backup Insomnia Spec
-        if: ${{ contains(env.REGIONS, "US") }}
+        if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           mkdir ./spec-backup
           deck dump --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupUS.yaml
@@ -81,7 +81,7 @@ jobs:
       # Ping the Kong instance
       # Sync to Konnect
       - name: Update Kong EU
-        if: ${{ contains(env.REGIONS, "EU") }}
+        if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com"
           deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
@@ -99,14 +99,14 @@ jobs:
 
       # Run tests on EU endpoint
       - name: Run test suites
-        if: ${{ contains(env.REGIONS, "EU") }}
+        if: ${{ contains(env.REGIONS, 'EU') }}
         run: inso run test Konnect_ApiOps_Example -e ${{ env.TARGET_ENVIRONMENT }} --verbose
         env:
           TARGET_ENVIRONMENT: EU_Environement
 
       # Run tests on US endpoint
       - name: Run test suites
-        if: ${{ contains(env.REGIONS, "US") }}
+        if: ${{ contains(env.REGIONS, 'US') }}
         run: inso run test Konnect_ApiOps_Example -e ${{ env.TARGET_ENVIRONMENT }} --verbose
         env:
           TARGET_ENVIRONMENT: US_Environement
@@ -124,21 +124,21 @@ jobs:
           echo "TITLE=$title" >> $GITHUB_ENV
 
       - name: Get Dev Portal EU ID
-        if: ${{ contains(env.REGIONS, "EU") }}
+        if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           portalEuId=$( curl 'https://eu.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
           echo "PORTAL_EU_ID=$portalEuId" >> $GITHUB_ENV
 
       # Get Dev Portal US ID
       - name: Get Dev Portal US ID
-        if: ${{ contains(env.REGIONS, "US") }}
+        if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           portalUsId=$( curl 'https://us.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
           echo "PORTAL_US_ID=$portalUsId" >> $GITHUB_ENV
           
       # Get spec json
       - name: Get spec json
-        if: ${{ contains(env.REGIONS, "EU") }}
+        if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           serviceVersionId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .id' )
           servicePackageId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .service_package.id' )
@@ -147,7 +147,7 @@ jobs:
 
       # Get spec json
       - name: Get spec json
-        if: ${{ contains(env.REGIONS, "US") }}
+        if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           serviceVersionId=$( curl 'https://us.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .id' )
           servicePackageId=$( curl 'https://us.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .service_package.id' )
@@ -156,7 +156,7 @@ jobs:
 
       # Post specs
       - name: Post specs
-        if: ${{ contains(env.REGIONS, "EU") }}
+        if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           curl 'https://eu.api.konghq.com/konnect-api/api/service_versions/${{ env.SERVICE_VERSION_ID }}/documents' \
           -H 'content-type: application/json' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
@@ -164,7 +164,7 @@ jobs:
 
       # Post specs
       - name: Post specs
-        if: ${{ contains(env.REGIONS, "US") }}
+        if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           curl 'https://us.api.konghq.com/konnect-api/api/service_versions/${{ env.SERVICE_VERSION_ID }}/documents' \
           -H 'content-type: application/json' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
@@ -179,19 +179,19 @@ jobs:
 
       # Publish Service Spec EU
       - name: Publish US Service Package
-        if: ${{ contains(env.REGIONS, "US") }}
+        if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           curl -X 'PUT' 'https://us.api.konghq.com/konnect-api/api/service_packages/${{ env.SERVICE_PACKAGE_ID }}/portals/${{ env.PORTAL_EU_ID }}' \
           -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}'
 
       - name: fallback
-        if: ${{ failure() && contains(env.REGIONS, "US") }}
+        if: ${{ failure() && contains(env.REGIONS, 'US') }}
         run: |
           deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s ./spec-backup/backupUS.yaml
           echo "Deployment failed - Backup completed"
 
       - name: fallback
-        if: ${{ failure() && contains(env.REGIONS, "EU") }}
+        if: ${{ failure() && contains(env.REGIONS, 'EU') }}
         run: |
           deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s ./spec-backup/backupEU.yaml
           echo "Deployment failed - Backup completed"
