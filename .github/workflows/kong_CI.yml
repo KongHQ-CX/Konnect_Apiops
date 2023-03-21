@@ -19,8 +19,8 @@ on:
 env:
   SERVICE_NAME: Konnect_ApiOps_Example  # Insomnia Project Name
   RUNTIME_GROUP: Konnect_ApiOps  # Insomnia Project Name
-  REGIONS: ("EU").  # REGIONS: ("EU", "US")
-  
+  REGIONS: ("EU", "US")
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   deploy-customer-api:
@@ -140,7 +140,7 @@ jobs:
       - name: Get spec json
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
-          serviceVersionId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .id' )
+          serviceVersionId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==${{ env.TITLE }} and .service_package.name==${{ env.SERVICE_NAME }}) | .id' )
           servicePackageId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .service_package.id' )
           echo "SERVICE_PACKAGE_ID=$servicePackageId" >> $GITHUB_ENV
           echo "SERVICE_VERSION_ID=$serviceVersionId" >> $GITHUB_ENV
