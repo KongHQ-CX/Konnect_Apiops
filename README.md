@@ -23,21 +23,40 @@ I have created a simple workflow to build and deploy Kong Services, routes and p
 Please add the following to Settingg-->Secrets configuration in your repository:
 ```
 KONNECT_TOKEN : Konnect Token
+```
+
+Also replace in the Github action flow yaml  
+```
+SERVICE_NAME: name of the service, could be the Insomnia Project Name
 KONG_PROXY_EU_URL: Kong Proxy EU Endpoint
 KONG_PROXY_US_URL: Kong Proxy US Endpoint
+RUNTIME_GROUP: the Konnect Runtime group Name
+REGIONS: Konnect region
 ```
-**Also replace the runtime group name in the kong_CI.yml github workflow or add a Konnect_ApiOps runtime group in Konnect!**
 
-```Get Dev Portal EU ID``` job retrieves the Developer Portal Id for the European Instance.
+** Make sure you added the Konnect_ApiOps runtime group in Konnect!**
 
-```Dev Portal EU change``` job pushs the change to the Developer Portal Id for the European Instance using the spec format json file located in the portal directory.  
+```Backup Insomnia Spec [region]``` job creates a backup file for the specific region, services and tags
 
 ```Validate Specification``` job uses inso CLI to do automated linting. If these is a problem with the api specification, it will stop the build process.  
 
 ```Generate declarative config``` job generates the Konnect yaml config file. It creates first a Kong yaml file and then convertes into a 3.0 spec format.
 
-```Sync to Konnect``` job synchronises the Konnect yaml with Konnect. 
+```Update Konnect [region]``` job synchronises the Konnect yaml with Konnect. 
 
 ```Prepare URL 4 Test file``` job replaces the  ```base_url``` in test spec file with the KONG_PROXY_EU_URL.
 
-At the end we use inso CLI to run the test cases we built in Insomnia and use the KONG_PROXY_EU_URL to check everythig has been correctly deployed.
+```Run test suites for [region]``` job use inso CLI to run the test cases we built in Insomnia and use the KONG_PROXY_URL to check everythig has been correctly deployed.
+
+```Get spec json``` job retrieves information about the openApiSpec files
+
+```Get spec information for [region]``` job retrieves the Developer Portal Id, Version ID and Service Package ID for the European Instance.
+
+```Post specs for [region] service version``` job adds the spec format json file to the service version.  
+
+```Publish [region] Service Package``` job pushs the change to the Developer Portal Id for the European Instance
+
+```fallback for [region]``` job uses the backup file to restor the state in case a job failed during the workflow 
+
+```success``` job confirmes that the workflow successfully run
+
