@@ -43,7 +43,7 @@ jobs:
 
       #Backup old config 
       - name: Backup Insomnia Spec
-        if: ${{ contains(env.REGIONS, "EU") }}
+        if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           mkdir ./spec-backup
           deck dump --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupEU.yaml
