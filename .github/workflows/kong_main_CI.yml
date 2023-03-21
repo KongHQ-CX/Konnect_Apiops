@@ -40,7 +40,7 @@ jobs:
         run: brew install inso
 
       #Backup old config for US
-      - name: Backup Insomnia Spec
+      - name: Backup Insomnia Spec US
         if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           mkdir -p ./spec-backup
@@ -49,7 +49,7 @@ jobs:
           ls ./spec-backup
 
       #Backup old config for EU
-      - name: Backup Insomnia Spec
+      - name: Backup Insomnia Spec EU
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           mkdir -p ./spec-backup
@@ -68,17 +68,17 @@ jobs:
           deck convert --from kong-gateway-2.x --to kong-gateway-3.x --input-file kong.yaml --output-file konnect.yaml
           cat konnect.yaml
       
-      # Ping the Kong instance for US
+      # Ping the Konnect instance for US
       # Sync to Konnect
-      - name: Update Kong US
+      - name: Update Konnect US
         if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com"
           deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml -s config/
 
-      # Ping the Kong instance for EU
+      # Ping the Konnect instance for EU
       # Sync to Konnect
-      - name: Update Kong EU
+      - name: Update Konnect EU
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com"
@@ -142,16 +142,16 @@ jobs:
           echo "SERVICE_PACKAGE_EU_ID=$servicePackageEuId" >> $GITHUB_ENV
           echo "SERVICE_VERSION_EU_ID=$serviceVersionEuId" >> $GITHUB_ENV
 
-      # Post specs
-      - name: Post specs
+      # Post specs for the service version US
+      - name: Post specs US
         if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           curl 'https://us.api.konghq.com/konnect-api/api/service_versions/${{ env.SERVICE_VERSION_US_ID }}/documents' \
           -H 'content-type: application/json' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
           --data-raw '{"path":"/test.yaml","content":${{ env.DOCUMENT_JSON }},"published":true}'
 
-      # Post specs
-      - name: Post specs
+      # Post specs for the service version EU
+      - name: Post specs EU
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           curl 'https://eu.api.konghq.com/konnect-api/api/service_versions/${{ env.SERVICE_VERSION_EU_ID }}/documents' \
