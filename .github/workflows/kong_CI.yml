@@ -2,6 +2,11 @@
 
 name: CI
 
+env:
+  SERVICE_NAME: Konnect_ApiOps_Example  # Insomnia Project Name
+  RUNTIME_GROUP: Konnect_ApiOps  # Insomnia Project Name
+  REGIONS: ("EU", "US")
+
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
@@ -23,12 +28,7 @@ jobs:
     runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v1
-      - name: Backup Insomnia Spec
-        run: |
-          mkdir ./spec-backup
-          cp ./.insomnia/ApiSpec/*.yml ./spec-backup
-          ls ./spec-backup            
+        uses: actions/checkout@v1        
       #Installing the inso, deck and portal cli
       - name: Install NodeJS
         uses: actions/setup-node@v2
@@ -40,95 +40,51 @@ jobs:
           brew install deck
       - name: Install inso
         run: brew install inso
-          
-      # Get Dev Portal EU ID
-      - name: Get Dev Portal EU ID
-        run: |
-          portalEuId=$( curl 'https://eu.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
-          echo "PORTAL_EU_ID=$portalEuId" >> $GITHUB_ENV
-        
-      # Push Dev Portal EU changes
-      - name: Dev Portal EU change
-        run: |
-          curl -X 'PATCH' 'https://eu.api.konghq.com/konnect-api/api/portals/${{ env.PORTAL_EU_ID }}' \
-          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
-          -H 'content-type: application/json' \
-          -d @./portal/spec_EU.json
 
-      # Get Dev Portal US ID
-      - name: Get Dev Portal US ID
+      #Backup old config 
+      - name: Backup Insomnia Spec
+        if: ${{ contains(env.REGIONS, "EU") }}
         run: |
-          portalUsId=$( curl 'https://us.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
-          echo "PORTAL_US_ID=$portalUsId" >> $GITHUB_ENV
-        
-      # Push Dev Portal US changes
-      - name: Dev Portal US change
-        run: |
-          curl -X 'PATCH' 'https://us.api.konghq.com/konnect-api/api/portals/${{ env.PORTAL_US_ID }}' \
-          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
-          -H 'content-type: application/json' \
-          -d @./portal/spec_US.json
-          
-      # Get spec json
-      - name: Get spec json
-        run: |
-          inso export spec Konnect_ApiOps_Example --output openSpecs.yaml
-          documentJson=$(jq -Rs '.' openSpecs.yaml)
-          version=$(cat openSpecs.yaml | yq .info.version)
-          title=$(cat openSpecs.yaml | yq .info.title)
-          echo "DOCUMENT_JSON=$documentJson" >> $GITHUB_ENV
-          echo "VERSION=$version" >> $GITHUB_ENV
-          echo "TITLE=$title" >> $GITHUB_ENV
+          mkdir ./spec-backup
+          deck dump --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupEU.yaml
+          cp ./backupEU.yaml ./spec-backup
+          ls ./spec-backup
 
-       # Push Service Spec EU
-      - name: Create EU Service Package
+      #Backup old config 
+      - name: Backup Insomnia Spec
+        if: ${{ contains(env.REGIONS, "US") }}
         run: |
-          servicePackageId=$( curl -X POST 'https://eu.api.konghq.com/konnect-api/api/service_packages' -H 'content-type: application/json' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' --data-raw '{"display_name":"${{ env.TITLE }}","name":"${{ env.TITLE }}","description":null}' | jq -r '.id')         
-          echo "SERVICE_PACKAGE_ID=$servicePackageId" >> $GITHUB_ENV
-      
-      # Publish Service Spec EU
-      - name: Publish EU Service Package
-        run: |
-          curl -X 'PUT' 'https://eu.api.konghq.com/konnect-api/api/service_packages/${{ env.SERVICE_PACKAGE_ID }}/portals/${{ env.PORTAL_EU_ID }}' \
-          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}'
-
-      # Get EU Runtime ID
-      - name: Get EU Runtime ID
-        run: |
-          controlPlaneId=$(curl 'https://eu.api.konghq.com/konnect-api/api/runtime_groups' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.name=="Konnect_ApiOps") | .id')
-          echo "CONTROL_PLANE_ID=$controlPlaneId" >> $GITHUB_ENV
-
-      # Create and Get Service Spec Version
-      - name: Create and Get Service Spec Version
-        run: |
-          serviceVersionId=$(curl -X 'POST' 'https://eu.api.konghq.com/konnect-api/api/service_versions' --data-raw '{"version":"v${{ env.VERSION }}","service_package":"${{ env.SERVICE_PACKAGE_ID }}","control_plane":"${{ env.CONTROL_PLANE_ID }}"}' -H 'content-type: application/json' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.id')
-          echo "SERVICE_VERSION_ID=$serviceVersionId" >> $GITHUB_ENV
-          
-      # Post specs
-      - name: Post specs
-        run: |
-          curl 'https://eu.api.konghq.com/konnect-api/api/service_versions/${{ env.SERVICE_VERSION_ID }}/documents' \
-          -H 'content-type: application/json' \
-          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
-          --data-raw '{"path":"/test.yaml","content":${{ env.DOCUMENT_JSON }},"published":true}'
+          mkdir ./spec-backup
+          deck dump --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupUS.yaml
+          cp ./backupUS.yaml ./spec-backup
+          ls ./spec-backup
 
       # API Spec linting
       - name: Validate specification
-        run: inso lint spec Konnect_ApiOps_Example
+        run: inso lint spec $SERVICE_NAME
       
       # Generate declarative config
       - name: Generate declarative config
         run: |
-          inso generate config Konnect_ApiOps_Example --tags Konnect_ApiOps_Example --output kong.yaml
+          inso generate config $SERVICE_NAME --tags _KonnectService:$SERVICE_NAME --output kong.yaml
           deck convert --from kong-gateway-2.x --to kong-gateway-3.x --input-file kong.yaml --output-file konnect.yaml
           cat konnect.yaml
       
       # Ping the Kong instance
       # Sync to Konnect
-      - name: Update Kong
+      - name: Update Kong EU
+        if: ${{ contains(env.REGIONS, "US") }}
         run: |
-          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputEU.txt
-          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" && deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name "Konnect_ApiOps" -s konnect.yaml > sync.outputUS.txt
+          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com"
+          deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
+
+      # Ping the Kong instance
+      # Sync to Konnect
+      - name: Update Kong EU
+        if: ${{ contains(env.REGIONS, "EU") }}
+        run: |
+          deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com"
+          deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
 
       # Prepare test spec             
       - name: Prepare URL 4 Test file
@@ -140,13 +96,107 @@ jobs:
         env:
           KONG_PROXY_EU_URL: '${{ secrets.KONG_PROXY_EU_URL }}'
           KONG_PROXY_US_URL: '${{ secrets.KONG_PROXY_US_URL }}'
+
       # Run tests on EU endpoint
       - name: Run test suites
+        if: ${{ contains(env.REGIONS, "EU") }}
         run: inso run test Konnect_ApiOps_Example -e ${{ env.TARGET_ENVIRONMENT }} --verbose
         env:
           TARGET_ENVIRONMENT: EU_Environement
+
       # Run tests on US endpoint
       - name: Run test suites
+        if: ${{ contains(env.REGIONS, "US") }}
         run: inso run test Konnect_ApiOps_Example -e ${{ env.TARGET_ENVIRONMENT }} --verbose
         env:
           TARGET_ENVIRONMENT: US_Environement
+
+
+      # Get spec json
+      - name: Get spec json
+        run: |
+          inso export spec $SERVICE_NAME --output openApiSpecs.yaml
+          documentJson=$(jq -Rs '.' openApiSpecs.yaml)
+          version=$(cat openApiSpecs.yaml | yq .info.version)
+          title=$(cat openApiSpecs.yaml | yq .info.title)
+          echo "DOCUMENT_JSON=$documentJson" >> $GITHUB_ENV
+          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "TITLE=$title" >> $GITHUB_ENV
+
+      - name: Get Dev Portal EU ID
+        if: ${{ contains(env.REGIONS, "EU") }}
+        run: |
+          portalEuId=$( curl 'https://eu.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
+          echo "PORTAL_EU_ID=$portalEuId" >> $GITHUB_ENV
+
+      # Get Dev Portal US ID
+      - name: Get Dev Portal US ID
+        if: ${{ contains(env.REGIONS, "US") }}
+        run: |
+          portalUsId=$( curl 'https://us.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
+          echo "PORTAL_US_ID=$portalUsId" >> $GITHUB_ENV
+          
+      # Get spec json
+      - name: Get spec json
+        if: ${{ contains(env.REGIONS, "EU") }}
+        run: |
+          serviceVersionId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .id' )
+          servicePackageId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .service_package.id' )
+          echo "SERVICE_PACKAGE_ID=$servicePackageId" >> $GITHUB_ENV
+          echo "SERVICE_VERSION_ID=$serviceVersionId" >> $GITHUB_ENV
+
+      # Get spec json
+      - name: Get spec json
+        if: ${{ contains(env.REGIONS, "US") }}
+        run: |
+          serviceVersionId=$( curl 'https://us.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .id' )
+          servicePackageId=$( curl 'https://us.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version==$TITLE and .service_package.name==$SERVICE_NAME) | .service_package.id' )
+          echo "SERVICE_PACKAGE_ID=$servicePackageId" >> $GITHUB_ENV
+          echo "SERVICE_VERSION_ID=$serviceVersionId" >> $GITHUB_ENV
+
+      # Post specs
+      - name: Post specs
+        if: ${{ contains(env.REGIONS, "EU") }}
+        run: |
+          curl 'https://eu.api.konghq.com/konnect-api/api/service_versions/${{ env.SERVICE_VERSION_ID }}/documents' \
+          -H 'content-type: application/json' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
+          --data-raw '{"path":"/test.yaml","content":${{ env.DOCUMENT_JSON }},"published":true}'
+
+      # Post specs
+      - name: Post specs
+        if: ${{ contains(env.REGIONS, "US") }}
+        run: |
+          curl 'https://us.api.konghq.com/konnect-api/api/service_versions/${{ env.SERVICE_VERSION_ID }}/documents' \
+          -H 'content-type: application/json' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' \
+          --data-raw '{"path":"/test.yaml","content":${{ env.DOCUMENT_JSON }},"published":true}'
+
+      # Publish Service Spec EU
+      - name: Publish EU Service Package
+        if: ${{ contains(env.REGIONS, "EU") }}
+        run: |
+          curl -X 'PUT' 'https://eu.api.konghq.com/konnect-api/api/service_packages/${{ env.SERVICE_PACKAGE_ID }}/portals/${{ env.PORTAL_EU_ID }}' \
+          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}'
+
+      # Publish Service Spec EU
+      - name: Publish US Service Package
+        if: ${{ contains(env.REGIONS, "US") }}
+        run: |
+          curl -X 'PUT' 'https://us.api.konghq.com/konnect-api/api/service_packages/${{ env.SERVICE_PACKAGE_ID }}/portals/${{ env.PORTAL_EU_ID }}' \
+          -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}'
+
+      - name: fallback
+        if: ${{ failure() && contains(env.REGIONS, "US") }}
+        run: |
+          deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s ./spec-backup/backupUS.yaml
+          echo "Deployment failed - Backup completed"
+
+      - name: fallback
+        if: ${{ failure() && contains(env.REGIONS, "EU") }}
+        run: |
+          deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s ./spec-backup/backupEU.yaml
+          echo "Deployment failed - Backup completed"
+
+      - name: success
+        if: ${{ success() }}
+        run: |
+          echo "Deployment completed successfully"
