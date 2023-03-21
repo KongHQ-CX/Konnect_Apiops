@@ -73,7 +73,7 @@ jobs:
       # Ping the Kong instance
       # Sync to Konnect
       - name: Update Kong EU
-        if: ${{ contains(env.REGIONS, "US") }}
+        if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com"
           deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
