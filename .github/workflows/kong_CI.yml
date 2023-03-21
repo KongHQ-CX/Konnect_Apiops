@@ -45,7 +45,7 @@ jobs:
       - name: Backup Insomnia Spec
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
-          mkdir ./spec-backup
+          mkdir -p ./spec-backup
           deck dump --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupEU.yaml
           cp ./backupEU.yaml ./spec-backup
           ls ./spec-backup
@@ -54,7 +54,7 @@ jobs:
       - name: Backup Insomnia Spec
         if: ${{ contains(env.REGIONS, 'US') }}
         run: |
-          mkdir ./spec-backup
+          mkdir -p ./spec-backup
           deck dump --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupUS.yaml
           cp ./backupUS.yaml ./spec-backup
           ls ./spec-backup
