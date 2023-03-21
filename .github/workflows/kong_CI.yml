@@ -48,7 +48,7 @@ jobs:
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           mkdir -p ./spec-backup
-          deck dump --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupEU.yaml
+          deck dump --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupEU.yaml
           cp ./backupEU.yaml ./spec-backup
           ls ./spec-backup
 
@@ -57,7 +57,7 @@ jobs:
         if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           mkdir -p ./spec-backup
-          deck dump --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupUS.yaml
+          deck dump --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -o backupUS.yaml
           cp ./backupUS.yaml ./spec-backup
           ls ./spec-backup
 
@@ -78,7 +78,7 @@ jobs:
         if: ${{ contains(env.REGIONS, 'US') }}
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com"
-          deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
+          deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
 
       # Ping the Kong instance
       # Sync to Konnect
@@ -86,7 +86,7 @@ jobs:
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           deck ping --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com"
-          deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
+          deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s konnect.yaml
 
       # Prepare test spec             
       - name: Prepare URL 4 Test file
@@ -189,13 +189,13 @@ jobs:
       - name: fallback
         if: ${{ failure() && contains(env.REGIONS, 'US') }}
         run: |
-          deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s ./spec-backup/backupUS.yaml
+          deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://us.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s ./spec-backup/backupUS.yaml
           echo "Deployment failed - Backup completed"
 
       - name: fallback
         if: ${{ failure() && contains(env.REGIONS, 'EU') }}
         run: |
-          deck sync --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s ./spec-backup/backupEU.yaml
+          deck sync --select-tag $SERVICE_NAME --konnect-token "${{ secrets.KONNECT_TOKEN }}" --konnect-addr "https://eu.api.konghq.com" --konnect-runtime-group-name $RUNTIME_GROUP -s ./spec-backup/backupEU.yaml
           echo "Deployment failed - Backup completed"
 
       - name: success
