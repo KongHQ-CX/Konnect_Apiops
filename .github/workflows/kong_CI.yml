@@ -19,7 +19,7 @@ on:
 env:
   SERVICE_NAME: Konnect_ApiOps_Example  # Insomnia Project Name
   RUNTIME_GROUP: Konnect_ApiOps  # Insomnia Project Name
-  REGIONS: ("EU", "US")
+  REGIONS: ("EU").  # REGIONS: ("EU", "US")
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
