@@ -96,8 +96,8 @@ jobs:
           tokenSuffix: '}$'
           files: '["./.insomnia/Environment/*.yml"]'
         env:
-          KONG_PROXY_EU_URL: '$KONG_PROXY_EU_URL'
-          KONG_PROXY_US_URL: '$KONG_PROXY_US_URL'
+          KONG_PROXY_EU_URL: '${{ env.KONG_PROXY_EU_URL }}'
+          KONG_PROXY_US_URL: '${{ env.KONG_PROXY_US_URL }}'
 
       # Run tests on EU endpoint
       - name: Run test suites
