@@ -19,7 +19,7 @@ on:
 env:
   SERVICE_NAME: Konnect_ApiOps_Example  # Insomnia Project Name
   KONG_PROXY_EU_URL: http://httpbin.org/anything
-  KONG_PROXY_US_URL: http://httpbin.org/anything
+  #KONG_PROXY_US_URL: http://httpbin.org/anything
   RUNTIME_GROUP: Konnect_ApiOps  # Insomnia Project Name
   REGIONS: ("EU") # REGIONS: ("EU", "US")
 
