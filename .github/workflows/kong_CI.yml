@@ -2,11 +2,6 @@
 
 name: CI
 
-env:
-  SERVICE_NAME: Konnect_ApiOps_Example  # Insomnia Project Name
-  RUNTIME_GROUP: Konnect_ApiOps  # Insomnia Project Name
-  REGIONS: ("EU", "US")
-
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
@@ -21,6 +16,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  SERVICE_NAME: Konnect_ApiOps_Example  # Insomnia Project Name
+  RUNTIME_GROUP: Konnect_ApiOps  # Insomnia Project Name
+  REGIONS: ("EU", "US")
+  
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   deploy-customer-api:
