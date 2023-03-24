@@ -15,7 +15,7 @@ APISecOps is short for API design, security, and operations. The solution center
 
 The diagram below provides the 10,000-foot view of an APISecOps solution.
 
-[DiagramePcture]
+![Alt text](/images/apiOps.png "Title")
 
 
 Remember that there are a number of questions you need to ask yourself before adapting an ApiOps stratagy:
@@ -139,7 +139,7 @@ https://docs.konghq.com/konnect/org-management/system-accounts
 **Make sure the token has only accessed to the Team Runtime Group**
 
 ### Import the repo in Insomnia
-[Image]
+![Alt text](/images/inso.png "Title")
 
 ### Open the repo with your IDE (ie: Visual Studio Code)
 Start you new micro service, before pushing to your service control system (Github, Gitlab...) make sure to replace the following variable in the 2 workflows"
