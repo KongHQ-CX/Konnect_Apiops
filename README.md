@@ -2,6 +2,7 @@
 
 This repository contains Konnect_ApiOps_Example project created with Insomnia and a workflow to build and deploy services, routes and plugins in Konnect.
 
+
 ## ApiOPs
 
 APISecOps is short for API design, security, and operations. The solution centers around the four core fundamentals:
@@ -56,7 +57,8 @@ Other questions to ask:
 - How many services
 - How many teams and Runtime Group
 
-## Pre Requisite
+
+## Prerequisite
 
 This repo is an example on how a customer could leverage Insomnia and Konnect to create a Federation model where team could deploy their own api in Konnect.
 
@@ -99,11 +101,18 @@ The Governance team will provide the:
 - The KongGlobal.yaml 
 - The Authorization tokens with only access to the team RG
 
-## Installation
+
+## Repository Demo
 In this model, the approach begins with API Design-First where the developer clone this github template, import the template in Insomnia, builds the API spec (and test suite) in Insomnia, using OpenAPI Spec (OAS) best practices and security standards defined by the business.
 
 A Pull Request on the main branch will action the Github Flow that will, if succesful, deploy the changes on the Dev Runtime Group and environment.
 After testing, merging the Pull Request will deploy the changes on the Production Runtime group. A failure check is setup in the flow so any failure will generate a rollback on previous version. 
+
+### GitHub Actions
+I have created a simple workflow to build and deploy Kong Services, routes and plugins. This workflow starts with checking out the the code, creating a backup from customer api specification and installing nodejs, deck and inso CLI.
+
+
+## Installation
 
 ### Git Clone the repo
 Create a new repository using the repo template:
@@ -119,6 +128,16 @@ In your repo, we recommand protecting the main branch so it could only accept Pu
 ### Add the Service Account Token
 In your repo please add the Service Account token provided by the governance team that will be used by the 2 flows. The current variable name is ```KONNECT_TOKEN```, please change it if needed.
 
+Go to Setting --> Secrets configuration in your repository:
+```
+KONNECT_TOKEN : Konnect Service Account Token
+```
+
+Follow steps in this document to create the Service Account Token:
+https://docs.konghq.com/konnect/org-management/system-accounts
+
+**Make sure the token has only accessed to the Team Runtime Group**
+
 ### Import the repo in Insomnia
 [Image]
 
@@ -133,7 +152,9 @@ Start you new micro service, before pushing to your service control system (Gith
 
 ```RUNTIME_GROUP``` The Runtime group Name provide by the Governance team
 
-```REGIONS``` The regions list to deploy the service (US, EU or both)
+```REGIONS``` The Konnect regions list to deploy the service (US, EU or both)
+
+**Make sure you added the Konnect_ApiOps runtime group in Konnect!**
 
 ### Prepare the Pull Request
 Create your service, OpenApiSpecs and Unit testing.
@@ -160,29 +181,8 @@ expect(response1.status).to.equal(200);
 
 We will run this test case as part of our Git Actions workflow to make sure, api deployment was successful.
 
-## GitHub Actions
-I have created a simple workflow to build and deploy Kong Services, routes and plugins. This workflow starts with checking out the the code, creating a backup from customer api specification and installing nodejs, deck and inso CLI.
 
-Please add the following to Setting --> Secrets configuration in your repository:
-```
-KONNECT_TOKEN : Konnect Service Account Token
-```
-
-Follow steps in this document to create the Service Account Token:
-https://docs.konghq.com/konnect/org-management/system-accounts
-
-**Make sure the token has only accessed to the Team Runtime Group**
-
-Also replace in the Github action flow yaml  
-```
-SERVICE_NAME: name of the service, could be the Insomnia Project Name
-KONG_PROXY_EU_URL: Kong Proxy EU Endpoint
-KONG_PROXY_US_URL: Kong Proxy US Endpoint
-RUNTIME_GROUP: the Konnect Runtime group Name
-REGIONS: Konnect region
-```
-
-**Make sure you added the Konnect_ApiOps runtime group in Konnect!**
+## Jobs description Actions
 
 ```Backup Insomnia Spec [region]``` job creates a backup file for the specific region, services and tags
 
