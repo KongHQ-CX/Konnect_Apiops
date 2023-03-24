@@ -23,11 +23,8 @@ Remember that there are a number of questions you need to ask yourself before ad
 - What level of collaboration/autonomy do you want to enable in your organization?
 
     - Product API teams / LoB should not be involved in CP/DP management. They will interface with their own Workspace.
-
     - Product API teams / LoB should not be involved in CP/DP management. They will have dedicated DPs and will interface via their own Workspace.
-
     - Product API teams / LoB should not be involved in CP management. They will take care of managing their own DPs and will interface via their own Workspace.
-
     - Product API teams / LoB will manage their own CP/DP.
 
 - How many environments are necessary?
@@ -66,29 +63,29 @@ They LoB will have dedicated Runtime Groupe and will not be involved in CP/DP ma
 
 Structure for the RunTime Group Team A:
 ```
-	Repo Service A
-		Github
-			flow
-				kong_main_CI.yml
-                kong_pr_CI.yaml
-		Config
-			kongGlobal.yaml
-			kongTeams.yaml
-		Service
-			ApiSpecServiceA.yaml
+Repo Service A
+	Github
+		flow
+			kong_main_CI.yml
+			kong_pr_CI.yaml
+	Config
+		kongGlobal.yaml
+		kongTeams.yaml
+	Service
+		ApiSpecServiceA.yaml
 
-	----
+----
 
-	Repo Service B
-		Github
-			flow
-				kong_main_CI.yml
-                kong_pr_CI.yaml
-		Config
-			kongGlobal.yaml
-			kongTeams.yaml
-		Service
-			ApiSpecServiceB.yaml
+Repo Service B
+	Github
+		flow
+			kong_main_CI.yml
+			kong_pr_CI.yaml
+	Config
+		kongGlobal.yaml
+		kongTeams.yaml
+	Service
+		ApiSpecServiceB.yaml
 ```
 
 In this repo in the config folder you can find 2 files:
@@ -114,7 +111,7 @@ I have created a simple workflow to build and deploy Kong Services, routes and p
 
 ## Installation
 
-### Git Clone the repo
+### 1) Git Clone the repo
 Create a new repository using the repo template:
 https://github.com/KongHQ-CX/Konnect_Apiops
 
@@ -125,7 +122,7 @@ git clone https://github.com/[repo]
 
 In your repo, we recommand protecting the main branch so it could only accept Pull Request and not direct Push.
 
-### Add the Service Account Token
+### 2) Add the Service Account Token
 In your repo please add the Service Account token provided by the governance team that will be used by the 2 flows. The current variable name is ```KONNECT_TOKEN```, please change it if needed.
 
 Go to Setting --> Secrets configuration in your repository:
@@ -138,10 +135,25 @@ https://docs.konghq.com/konnect/org-management/system-accounts
 
 **Make sure the token has only accessed to the Team Runtime Group**
 
-### Import the repo in Insomnia
+### 3) Import the repo and Konnect_ApiOps_Example project in Insomnia
 ![Alt text](/images/inso.png "Title")
 
-### Open the repo with your IDE (ie: Visual Studio Code)
+You can use insomnia to directly import this project from git repository. After importing the project, You can find the API specification in the Design tab. This is a simple api which returns an echo message and rate.
+
+If you want to test the API, you can use the debug tab and call the Konnect_ApiOps_Example. Please update the environment to point to the correct proxy endpoint. In localhost you can use Ngrok.
+
+In order to create test cases for your api, you can use the Test tab in Insomnia. In this project, we have created a simple test case for HTTP 200 response code.
+
+```
+const response1 = await insomnia.send();
+
+expect(response1.status).to.equal(200);
+```
+
+We will run this test case as part of our Git Actions workflow to make sure, api deployment was successful.
+
+
+### 4) Open the repo with your IDE (ie: Visual Studio Code)
 Start you new micro service, before pushing to your service control system (Github, Gitlab...) make sure to replace the following variable in the 2 workflows"
 
 ```SERVICE_NAME``` The service name that will also appear in the Dev Portal, recommend to use the same name that your Insomnia Project Name
@@ -156,30 +168,14 @@ Start you new micro service, before pushing to your service control system (Gith
 
 **Make sure you added the Konnect_ApiOps runtime group in Konnect!**
 
-### Prepare the Pull Request
+### 5) Prepare the Pull Request
 Create your service, OpenApiSpecs and Unit testing.
 
-### Create a Pull Request
+### 6) Create a Pull Request
 Push the change to your repo. The Pull Request will trigger the kong_pr_CI flow. If succesful try make a call to the Dev Proxy URL.
 
-### Merge the Pull Request
+### 7) Merge the Pull Request
 Merhe the change from the Pull Request to the Main branch. The Pull Request will trigger the kong_main_CI flow. If succesful try make a call to the Prod Proxy URL.
-
-
-## Konnect_ApiOps_Example
-You can use insomnia to directly import this project from git repository. After importing the project, You can find the API specification in the Design tab. This is a simple api which returns an echo message and rate.
-
-If you want to test the API, you can use the debug tab and call the Konnect_ApiOps_Example. Please update the environment to point to the correct proxy endpoint. In localhost you can use Ngrok.
-
-In order to create test cases for your api, you can use the Test tab in Insomnia. In this project, we have created a simple test case for HTTP 200 response code.
-
-```
-const response1 = await insomnia.send();
-
-expect(response1.status).to.equal(200);
-```
-
-We will run this test case as part of our Git Actions workflow to make sure, api deployment was successful.
 
 
 ## Jobs description Actions
