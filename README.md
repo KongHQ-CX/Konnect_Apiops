@@ -130,6 +130,8 @@ Go to Setting --> Secrets configuration in your repository:
 KONNECT_TOKEN : Konnect Service Account Token
 ```
 
+![Alt text](/images/secret.png "Title")
+
 Follow steps in this document to create the Service Account Token:
 https://docs.konghq.com/konnect/org-management/system-accounts
 
