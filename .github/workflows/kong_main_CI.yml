@@ -136,8 +136,9 @@ jobs:
         if: ${{ contains(env.REGIONS, 'EU') }}
         run: |
           portalEuId=$( curl 'https://eu.api.konghq.com/konnect-api/api/portals' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
-          serviceVersionEuId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version=="${{ env.TITLE }}" and .service_package.name=="${{ env.SERVICE_NAME }}" ) | .id' )
-          servicePackageEuId=$( curl 'https://eu.api.konghq.com/konnect-api/api/service_versions' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[] | select(.version=="${{ env.TITLE }}" and .service_package.name=="${{ env.SERVICE_NAME }}" ) | .service_package.id' )
+          # Using filter parameter instead of jq
+          serviceVersionEuId=$( curl -g 'https://eu.api.konghq.com/konnect-api/api/service_versions?s={"service_package.name":"${{ env.SERVICE_NAME }}","version":"${{ env.TITLE }}"}' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].id' )
+          servicePackageEuId=$( curl -g 'https://eu.api.konghq.com/konnect-api/api/service_versions?s={"service_package.name":"${{ env.SERVICE_NAME }}","version":"${{ env.TITLE }}"}' -H 'authorization: Bearer ${{ secrets.KONNECT_TOKEN }}' | jq -r '.data[].service_package.id' )
           echo "PORTAL_EU_ID=$portalEuId" >> $GITHUB_ENV
           echo "SERVICE_PACKAGE_EU_ID=$servicePackageEuId" >> $GITHUB_ENV
           echo "SERVICE_VERSION_EU_ID=$serviceVersionEuId" >> $GITHUB_ENV
